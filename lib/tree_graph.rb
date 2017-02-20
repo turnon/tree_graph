@@ -3,34 +3,57 @@ require "tree_graph/version"
 module TreeGraph
 
   def tree_graph
-    ([tree_graph_level] +
-     children_for_tree_graph.map(&:tree_graph)
-    ).join("\n")
+    Node.new(self).tree_graph
   end
 
-  def tree_graph_level
-    tree_graph_indent +
-      tree_graph_branch +
-      label_for_tree_graph
-  end
+  class Node
 
-  def tree_graph_ancestors
-    return [] unless parent_for_tree_graph
-    parent_for_tree_graph.tree_graph_ancestors + [parent_for_tree_graph]
-  end
+    attr_accessor :is_last
+    attr_reader :raw_node, :parent
 
-  def tree_graph_branch
-    return '' unless parent_for_tree_graph
-    is_last_for_tree_graph ? '└─' : '├─'
-  end
+    def initialize raw_node, parent=nil
+      @raw_node, @parent, @is_last = raw_node, parent, false
+    end
 
-  def tree_graph_indent
-    tree_graph_ancestors.map do |a|
-      unless a.parent_for_tree_graph
-        ''
-      else
-        a.is_last_for_tree_graph ? ' ' : '│ '
+    def tree_graph
+      ([level] +
+       children_nodes.map(&:tree_graph)
+      ).join("\n")
+    end
+
+    def children_nodes
+      children = []
+      raw_node.children_for_tree_graph.each do |c|
+        children << Node.new(c, self)
       end
-    end.join
+      return children if children.empty?
+      children.last.is_last = true
+      children
+    end
+
+    def level
+      [indent, branch, raw_node.label_for_tree_graph].join
+    end
+
+    def ancestors
+      return [] unless parent
+      parent.ancestors + [parent]
+    end
+
+    def branch
+      return '' unless parent
+      is_last ? '└─' : '├─'
+    end
+
+    def indent
+      ancestors.map do |a|
+        unless a.parent
+          ''
+        else
+          a.is_last ? '  ' : '│ '
+        end
+      end.join
+    end
+
   end
 end
