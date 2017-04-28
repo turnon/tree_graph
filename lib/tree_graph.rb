@@ -3,10 +3,14 @@ require "tree_graph/version"
 module TreeGraph
 
   def tree_graph
-    Node.new(self).tree_graph
+    TopDown.new(self).tree_graph
   end
 
-  class Node
+  def tree_graph_bottom_up
+    BottomUp.new(self).tree_graph
+  end
+
+  module Node
 
     attr_accessor :is_last
     attr_reader :raw_node, :parent
@@ -15,16 +19,10 @@ module TreeGraph
       @raw_node, @parent, @is_last = raw_node, parent, false
     end
 
-    def tree_graph
-      ([level] +
-       children_nodes.map(&:tree_graph)
-      ).join("\n")
-    end
-
     def children_nodes
       children = []
       raw_node.children_for_tree_graph.each do |c|
-        children << Node.new(c, self)
+        children << self.class.new(c, self)
       end
       return children if children.empty?
       children.last.is_last = true
@@ -35,14 +33,13 @@ module TreeGraph
       [indent, branch, raw_node.label_for_tree_graph].join
     end
 
+    def levels
+      [level] + children_nodes.map(&:tree_graph)
+    end
+
     def ancestors
       return [] unless parent
       parent.ancestors + [parent]
-    end
-
-    def branch
-      return '' unless parent
-      is_last ? '└─' : '├─'
     end
 
     def indent
@@ -55,5 +52,31 @@ module TreeGraph
       end.join
     end
 
+  end
+
+  class TopDown
+    include Node
+
+    def tree_graph
+      levels.join("\n")
+    end
+
+    def branch
+      return '' unless parent
+      is_last ? '└─' : '├─'
+    end
+  end
+
+  class BottomUp
+    include Node
+
+    def tree_graph
+      levels.reverse.join("\n")
+    end
+
+    def branch
+      return '' unless parent
+      is_last ? '┌─' : '├─'
+    end
   end
 end

@@ -54,4 +54,18 @@ A (a)
 EOS
     assert_equal tree.chomp, @a.tree_graph
   end
+
+  def test_tree_graph_bottom_up
+    tree = <<EOS
+┌─E (e)
+│ ┌─F (f)
+│ │ ┌─H (h)
+│ ├─D (d)
+│ ├─G (g)
+├─C (c)
+├─B (b)
+A (a)
+EOS
+    assert_equal tree.chomp, @a.tree_graph_bottom_up
+  end
 end
