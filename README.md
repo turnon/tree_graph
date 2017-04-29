@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-In Node class, `include TreeGraph`, then implement two methods, `label_for_tree_graph` and `children_for_tree_graph`(which return thing responds to `each`). Then you can call `tree_graph` and `tree_graph_bottom_up` on that Node object.
+In Node class, `include TreeGraph`, then implement two methods, `label_for_tree_graph` and `children_for_tree_graph`(which return thing responds to `each`). Then you can call `tree_graph`, `tree_graph_bottom_up` and `tree_graph_bottom_up_in_same_order` on that Node object.
 
 Or checkout [test/tree_graph_test.rb](https://github.com/turnon/tree_graph/blob/master/test/tree_graph_test.rb) to see how to use.
 

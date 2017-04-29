@@ -10,6 +10,10 @@ module TreeGraph
     BottomUp.new(self).tree_graph
   end
 
+  def tree_graph_bottom_up_in_same_order
+    BottomUpInSameOrder.new(self).tree_graph
+  end
+
   module Node
 
     attr_accessor :is_last
@@ -20,13 +24,15 @@ module TreeGraph
     end
 
     def children_nodes
-      children = []
-      raw_node.children_for_tree_graph.each do |c|
-        children << self.class.new(c, self)
+      children.map do |c|
+        self.class.new(c, self)
+      end.tap do |nodes|
+        nodes.last.is_last = true unless nodes.empty?
       end
-      return children if children.empty?
-      children.last.is_last = true
-      children
+    end
+
+    def children
+      raw_node.children_for_tree_graph
     end
 
     def level
@@ -77,6 +83,12 @@ module TreeGraph
     def branch
       return '' unless parent
       is_last ? '┌─' : '├─'
+    end
+  end
+
+  class BottomUpInSameOrder < BottomUp
+    def children
+      super.reverse
     end
   end
 end
