@@ -34,7 +34,7 @@ class TreeGraphTest < Minitest::Test
     end
     @a << @b << @c << @e
     @c << @g << @d << @f
-    @d << @h
+    @d << @h << "i"
   end
 
   def test_that_it_has_a_version_number
@@ -48,7 +48,8 @@ A (a)
 ├─C (c)
 │ ├─G (g)
 │ ├─D (d)
-│ │ └─H (h)
+│ │ ├─H (h)
+│ │ └─i
 │ └─F (f)
 └─E (e)
 EOS
@@ -59,7 +60,8 @@ EOS
     tree = <<EOS
 ┌─E (e)
 │ ┌─F (f)
-│ │ ┌─H (h)
+│ │ ┌─i
+│ │ ├─H (h)
 │ ├─D (d)
 │ ├─G (g)
 ├─C (c)
@@ -74,6 +76,7 @@ EOS
 ┌─B (b)
 │ ┌─G (g)
 │ │ ┌─H (h)
+│ │ ├─i
 │ ├─D (d)
 │ ├─F (f)
 ├─C (c)

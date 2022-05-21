@@ -14,6 +14,18 @@ module TreeGraph
     BottomUpInSameOrder.new(self).tree_graph
   end
 
+  EMPTY_ARRAY = []
+
+  class ::Object
+    def label_for_tree_graph
+      to_s
+    end
+
+    def children_for_tree_graph
+      EMPTY_ARRAY
+    end
+  end
+
   module Node
 
     attr_accessor :is_last
@@ -44,7 +56,7 @@ module TreeGraph
     end
 
     def ancestors
-      return [] unless parent
+      return EMPTY_ARRAY unless parent
       parent.ancestors + [parent]
     end
 
